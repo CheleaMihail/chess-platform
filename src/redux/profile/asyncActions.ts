@@ -2,11 +2,11 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { IError, IUser } from '../../types/interfaces';
 import $api from '../../http';
 
-export const fetchSearchPlayers = createAsyncThunk<IUser[], string, { rejectValue: IError }>(
-  'players/fetchSearchPlayers',
-  async (username, { rejectWithValue }) => {
+export const fetchCurrentUser = createAsyncThunk<IUser, undefined, { rejectValue: IError }>(
+  'profile/fetchCurrentUser',
+  async (undefined, { rejectWithValue }) => {
     try {
-      const response = await $api.get<IUser[]>('users/search/' + username);
+      const response = await $api.get<IUser>('users/current/');
 
       return response.data;
     } catch (error: any) {
