@@ -1,69 +1,42 @@
-import { useEffect, useState } from "react";
-import ChessBoard from "../components/Chessboard";
-import { useAppDispatch } from "../redux";
-import { useSelector } from "react-redux";
-import { selectRooms } from "../redux/rooms/selectors";
-import { connectToRoom, disconnectRoom, sendMessage } from "../services/rooms";
-import { addMessage, setConnected, setMessages } from "../redux/rooms/slice";
-import { Button } from "react-bootstrap";
+import { useEffect, useState } from 'react';
+import ChessBoard from '../components/Chessboard';
+import { useAppDispatch } from '../redux';
+import { useSelector } from 'react-redux';
+import { selectRooms } from '../redux/rooms/selectors';
+import { connectToRoom, disconnectRoom, sendMove } from '../services/rooms';
+import { addMessage, setColor, setConnected, setFEN, setMessages } from '../redux/rooms/slice';
+import { Button } from 'react-bootstrap';
 import { selectAuthStatus } from '../redux/auth/selectors';
 
 const Home = () => {
   const dispatch = useAppDispatch();
-  const { messages, isConnected } = useSelector(selectRooms);
-  const [rooms, setRooms] = useState(["room1", "room2"]);
+  const { messages, isConnected, color, fen } = useSelector(selectRooms);
+  const [rooms, setRooms] = useState(['room1', 'room2']);
   const [roomId, setRoomId] = useState(rooms[0]);
   const auth = useSelector(selectAuthStatus);
-  const [board, setBoard] = useState<string>(
-    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-  );
 
   const handleMakeMove = async (fen: string) => {
-    // // Send the FEN to the server for validation (you can replace this with an actual API call)
-    // try {
-    //   const response = await fetch("/api/validateMove", {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({ fen }),
-    //   });
-
-    //   const data = await response.json();
-    //   if (data.valid) {
-    //     // If the move is valid, update the board with the new FEN
-    //     setBoard(data.updatedFen);
-    //   } else {
-    //     // Handle invalid move (e.g., display error message)
-    //     console.error("Invalid move");
-    //   }
-    // } catch (error) {
-    //   console.error("Error validating move:", error);
-    // }
-    console.log("You sent to server: ", fen);
+    sendMove(fen);
   };
 
   useEffect(() => {
-    connectToRoom(
-      roomId,
-      (message) => dispatch(addMessage(message)),
-      // (messages) => dispatch(setMessages(messages)),
-      (status) => dispatch(setConnected(status)),
-      auth.id
-    );
+    if (auth.id) {
+      connectToRoom({
+        roomId,
+        user_id: auth.id,
+        onMessage: (message) => dispatch(addMessage(message)),
+        onStatusChange: (status) => dispatch(setConnected(status)),
+        onGetColor: (color) => dispatch(setColor(color)),
+        onChangeFEN: (fen: string) => dispatch(setFEN(fen)),
+      });
 
-    return () => {
-      disconnectRoom();
-    };
+      return () => {
+        disconnectRoom();
+      };
+    }
   }, [roomId, dispatch, auth.id]);
 
-  const handleSendMessage = () => {
-    sendMessage("Hello World");
-  };
-
-  const onMakeMove = (move: string) => {
-    // sedwfiewjgow
-  };
+  const handleSendMessage = () => {};
 
   return (
     <main className="container-fluid h-100 bg-transparent">
@@ -74,7 +47,7 @@ const Home = () => {
           {rooms.map((room, index) => (
             <Button
               key={index}
-              variant={roomId !== room ? "outline-secondary" : "info"}
+              variant={roomId !== room ? 'outline-secondary' : 'info'}
               onClick={() => setRoomId(room)}
             >
               {room}
@@ -82,11 +55,7 @@ const Home = () => {
           ))}
         </ul>
 
-        <p className="text-white">
-          {isConnected
-            ? "Connected to WebSocket"
-            : "Connecting to WebSocket..."}
-        </p>
+        <p className="text-white">{isConnected ? 'Connected to WebSocket' : 'Connecting to WebSocket...'}</p>
 
         <Button onClick={handleSendMessage} disabled={!isConnected}>
           Send Message
@@ -103,7 +72,7 @@ const Home = () => {
           </ul>
         </div>
       </div>
-      <ChessBoard onMakeMove={handleMakeMove} board={board} />
+      <ChessBoard boardOrientation={color || 'white'} onMakeMove={handleMakeMove} fen={fen} />
     </main>
   );
 };
