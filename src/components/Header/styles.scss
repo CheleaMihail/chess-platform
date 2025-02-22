@@ -1,0 +1,22 @@
+.header {
+  background-color: var(--secondary-gray);
+  span {
+    color: var(--primary-green);
+  }
+}
+
+.buttons {
+  color: var(--primary-blue);
+  button {
+    background: transparent;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    height: 40px;
+  }
+}
+.verticalLine {
+  height: 100%;
+  width: 1px;
+  background-color: var(--dark-gray);
+}
