@@ -2,10 +2,12 @@ import { configureStore } from '@reduxjs/toolkit';
 import { useDispatch } from 'react-redux';
 
 import auth from './auth/slice';
+import rooms from './rooms/slice';
 
 const store = configureStore({
   reducer: {
     auth,
+    rooms,
   },
 });
 export type RootState = ReturnType<typeof store.getState>;
