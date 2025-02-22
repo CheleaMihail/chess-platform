@@ -6,12 +6,14 @@ import { selectRooms } from "../redux/rooms/selectors";
 import { connectToRoom, disconnectRoom, sendMessage } from "../services/rooms";
 import { addMessage, setConnected, setMessages } from "../redux/rooms/slice";
 import { Button } from "react-bootstrap";
+import { selectAuthStatus } from '../redux/auth/selectors';
 
 const Home = () => {
   const dispatch = useAppDispatch();
   const { messages, isConnected } = useSelector(selectRooms);
   const [rooms, setRooms] = useState(["room1", "room2"]);
   const [roomId, setRoomId] = useState(rooms[0]);
+  const auth = useSelector(selectAuthStatus);
   const [board, setBoard] = useState<string>(
     "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
   );
@@ -46,16 +48,21 @@ const Home = () => {
       roomId,
       (message) => dispatch(addMessage(message)),
       // (messages) => dispatch(setMessages(messages)),
-      (status) => dispatch(setConnected(status))
+      (status) => dispatch(setConnected(status)),
+      auth.id
     );
 
     return () => {
       disconnectRoom();
     };
-  }, [roomId, dispatch]);
+  }, [roomId, dispatch, auth.id]);
 
   const handleSendMessage = () => {
     sendMessage("Hello World");
+  };
+
+  const onMakeMove = (move: string) => {
+    // sedwfiewjgow
   };
 
   return (
