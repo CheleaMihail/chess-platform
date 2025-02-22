@@ -7,7 +7,7 @@ const MainLayout = () => {
   return (
     <div className="app container-fluid p-0 h-100 d-flex">
       <Navbar />
-      <div className="flex-grow-1 h-100 w-70">
+      <div className="flex-grow-1 h-100">
         <Header />
         <Outlet />
       </div>

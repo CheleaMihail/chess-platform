@@ -15,11 +15,16 @@ function Header() {
       <Stack direction="horizontal" className="buttons" gap={2}>
         <span className="verticalLine"></span>
         <Button className="px-2">
-          <Settings />
+          <Link to="/user/settings">
+            <Settings />
+          </Link>
         </Button>
         <span className="verticalLine"></span>
+
         <Button className="px-2">
-          <Exit /> Sign in
+          <Link to="/login">
+            <Exit /> Sign in{" "}
+          </Link>
         </Button>
       </Stack>
     </header>

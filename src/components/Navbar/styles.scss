@@ -1,6 +1,10 @@
 .nav {
   background-color: var(--primary-gray);
   width: 280px;
+  &_link {
+    height: 60px;
+    color: var(--text-gray);
+  }
 }
 
 .logo {
@@ -23,4 +27,8 @@
   height: 8px;
   background-color: var(--dark);
   position: relative;
+}
+
+a {
+  color: var(--text-gray);
 }

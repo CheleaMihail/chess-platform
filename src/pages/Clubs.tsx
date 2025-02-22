@@ -1,8 +1,9 @@
 import React from "react";
+import { Container } from "react-bootstrap";
 
 const Clubs = () => {
   return (
-    <div>
+    <Container>
       Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet sit unde,
       provident nisi ea facere explicabo quam minus! Dolor sunt quis dolorum
       illum unde architecto accusantium similique pariatur nisi est illo dolore
@@ -14,7 +15,7 @@ const Clubs = () => {
       quas nulla rerum ab. Ducimus similique maxime, facilis omnis officiis
       aliquam quisquam dicta delectus consectetur sapiente illum, quibusdam
       consequuntur nemo ratione ad? Minus, aliquam.
-    </div>
+    </Container>
   );
 };
 
