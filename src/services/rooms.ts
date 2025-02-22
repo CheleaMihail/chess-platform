@@ -1,15 +1,18 @@
 let socket: WebSocket | null = null;
 
+const wsUrl = process.env.REACT_APP_API_URL;
+
 export const connectToRoom = (
   roomId: string,
   onMessage: (message: string) => void,
-  onStatusChange: (status: boolean) => void
+  onStatusChange: (status: boolean) => void,
+  user_id?: number
 ) => {
   if (socket) {
     socket.close();
   }
 
-  socket = new WebSocket(`ws://localhost:8000/rooms/${roomId}`);
+  socket = new WebSocket(wsUrl + `rooms/${roomId}/${user_id ? user_id : ''}`);
 
   socket.onopen = () => onStatusChange(true);
   socket.onmessage = (event) => onMessage(event.data);

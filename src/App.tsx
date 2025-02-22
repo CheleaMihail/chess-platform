@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import './App.scss';
@@ -10,8 +10,16 @@ import Login from './pages/Login';
 import Settings from './pages/Settings';
 import Register from './pages/Register';
 import Players from './pages/Players';
+import { useAppDispatch } from './redux';
+import { fetchAuthRefresh } from './redux/auth/asyncActions';
 
 const App: React.FC = () => {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(fetchAuthRefresh());
+  }, []);
+
   return (
     <Router>
       <Routes>
