@@ -1,13 +1,15 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-import "./App.scss";
+import './App.scss';
 
-import MainLayout from "./layouts/MainLayout";
-import Home from "./pages/Home";
-import Clubs from "./pages/Clubs";
-import Login from "./pages/Login";
-import Settings from "./pages/Settings";
+import MainLayout from './layouts/MainLayout';
+import Home from './pages/Home';
+import Clubs from './pages/Clubs';
+import Login from './pages/Login';
+import Settings from './pages/Settings';
+import Register from './pages/Register';
+import Players from './pages/Players';
 
 const App: React.FC = () => {
   return (
@@ -17,6 +19,8 @@ const App: React.FC = () => {
           <Route index element={<Home />} />
           <Route path="/clubs" element={<Clubs />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/players" element={<Players />} />
           <Route path="/user/settings" element={<Settings />} />
         </Route>
       </Routes>
