@@ -1,9 +1,5 @@
-import { EFetchStatus } from "../../types/enums";
-
-export interface IError {
-  message: string;
-  errors?: Record<string, string[]>;
-}
+import { EFetchStatus } from '../../types/enums';
+import { IError } from '../../types/interfaces';
 
 export interface ILoginResponse {
   id: number;
@@ -18,5 +14,4 @@ export interface IAuthState {
   status: EFetchStatus;
 }
 
-export interface IRefreshResponse
-  extends Omit<ILoginResponse, "refresh_token"> {}
+export interface IRefreshResponse extends Omit<ILoginResponse, 'refresh_token'> {}

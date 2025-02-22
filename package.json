@@ -16,6 +16,7 @@
     "bootstrap": "^5.3.3",
     "chess.js": "^1.0.0",
     "chessboardjsx": "^2.4.7",
+    "dotenv": "^16.4.7",
     "jwt-decode": "^4.0.0",
     "react": "^19.0.0",
     "react-bootstrap": "^2.10.9",
