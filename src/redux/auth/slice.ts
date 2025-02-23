@@ -1,27 +1,27 @@
-import { createSlice } from "@reduxjs/toolkit";
-import {
-  fetchAuthLogin,
-  fetchAuthRefresh,
-  fetchAuthRegister,
-} from "./asyncActions";
-import { IAuthState } from "./types";
-import { EFetchStatus } from "../../types/enums";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { fetchAuthLogin, fetchAuthRefresh, fetchAuthRegister } from './asyncActions';
+import { IAuthState } from './types';
+import { EFetchStatus } from '../../types/enums';
 
 const initialState: IAuthState = {
   id: undefined,
+  guestId: undefined,
   status: EFetchStatus.PENDING,
   error: undefined,
 };
 
 const authSlice = createSlice({
-  name: "auth",
+  name: 'auth',
   initialState,
   reducers: {
     logOut: (state) => {
       state.error = undefined;
       state.id = undefined;
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+    },
+    setGuestId: (state, action: PayloadAction<string>) => {
+      state.guestId = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -68,6 +68,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { logOut } = authSlice.actions;
+export const { logOut, setGuestId } = authSlice.actions;
 
 export default authSlice.reducer;

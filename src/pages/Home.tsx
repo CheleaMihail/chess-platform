@@ -7,34 +7,38 @@ import { connectToRoom, disconnectRoom, sendMove } from '../services/rooms';
 import { addMessage, setColor, setConnected, setFEN, setMessages } from '../redux/rooms/slice';
 import { Button } from 'react-bootstrap';
 import { selectAuthStatus } from '../redux/auth/selectors';
+import { EFetchStatus } from '../types/enums';
 
 const Home = () => {
   const dispatch = useAppDispatch();
   const { messages, isConnected, color, fen } = useSelector(selectRooms);
-  const [rooms, setRooms] = useState(['room1', 'room2']);
-  const [roomId, setRoomId] = useState(rooms[0]);
   const auth = useSelector(selectAuthStatus);
 
   const handleMakeMove = async (fen: string) => {
-    sendMove(fen);
+    const roomId = localStorage.getItem('roomId');
+    if (roomId) sendMove(fen, roomId);
   };
 
   useEffect(() => {
-    if (auth.id) {
+    if (auth.id || auth.guestId) {
+      const roomId = localStorage.getItem('roomId');
+
       connectToRoom({
-        roomId,
-        user_id: auth.id,
+        roomId: roomId || undefined,
+        user_id: (auth.id || auth.guestId) + '',
         onMessage: (message) => dispatch(addMessage(message)),
         onStatusChange: (status) => dispatch(setConnected(status)),
         onGetColor: (color) => dispatch(setColor(color)),
-        onChangeFEN: (fen: string) => dispatch(setFEN(fen)),
+        onChangeFEN: (fen: string) => {
+          dispatch(setFEN(fen));
+        },
       });
 
       return () => {
         disconnectRoom();
       };
     }
-  }, [roomId, dispatch, auth.id]);
+  }, [dispatch, auth.id, auth.guestId]);
 
   const handleSendMessage = () => {};
 
@@ -42,7 +46,7 @@ const Home = () => {
     <main className="container-fluid h-100 bg-transparent">
       <h1 className="text-center my-4 text-white">Chess Game</h1>
       <div>
-        <h1 className="text-white">Room ID: {roomId}</h1>
+        {/* <h1 className="text-white">Room ID: {roomId}</h1>
         <ul className="d-flex gap-3">
           {rooms.map((room, index) => (
             <Button
@@ -53,7 +57,7 @@ const Home = () => {
               {room}
             </Button>
           ))}
-        </ul>
+        </ul> */}
 
         <p className="text-white">{isConnected ? 'Connected to WebSocket' : 'Connecting to WebSocket...'}</p>
 

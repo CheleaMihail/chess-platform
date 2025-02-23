@@ -15,13 +15,30 @@ import { fetchAuthRefresh } from "./redux/auth/asyncActions";
 import Club from "./pages/Club";
 import CreateGame from "./pages/CreateGame";
 import WaitGame from "./pages/WaitGame";
+import { useSelector } from 'react-redux';
+import { selectAuthStatus } from './redux/auth/selectors';
+import { EFetchStatus } from './types/enums';
+import { setGuestId } from './redux/auth/slice';
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
+  const auh = useSelector(selectAuthStatus);
 
   useEffect(() => {
     dispatch(fetchAuthRefresh());
   }, []);
+
+  useEffect(() => {
+    if (!auh.id && auh.status === EFetchStatus.ERROR) {
+      const guestId = localStorage.getItem('guestId');
+
+      if (!guestId) {
+        const guestId = 'guest_' + Math.random();
+        localStorage.setItem('guestId', guestId);
+        dispatch(setGuestId(guestId));
+      } else dispatch(setGuestId(guestId));
+    }
+  }, [auh.id, auh.status]);
 
   return (
     <Router>

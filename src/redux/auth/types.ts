@@ -10,6 +10,7 @@ export interface ILoginResponse {
 
 export interface IAuthState {
   id?: number;
+  guestId?: string;
   error?: IError;
   status: EFetchStatus;
 }
