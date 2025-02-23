@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAppDispatch } from '../redux';
 import { useSelector } from 'react-redux';
 import { connectToRoom, disconnectRoom } from '../services/rooms';
-import { Button, Col, Nav, Row } from 'react-bootstrap';
+import { Button, Col, Nav, Row, Spinner } from 'react-bootstrap';
 import { selectAuthStatus } from '../redux/auth/selectors';
 import { FaDove, FaRocket } from 'react-icons/fa6';
 import { GiJetFighter } from 'react-icons/gi';
@@ -30,16 +30,15 @@ const Home = () => {
   };
 
   useEffect(() => {
-    dispatch(setGame(undefined));
-  }, []);
-
-  useEffect(() => {
     if (game?.opponentId) {
       navigate('/game/' + game.roomId);
     }
-
-    return () => disconnectRoom();
   }, [game]);
+
+  useEffect(() => {
+    dispatch(setGame(undefined));
+    return () => disconnectRoom();
+  }, []);
 
   return (
     <main className="container-fluid h-100 bg-transparent">
@@ -60,18 +59,33 @@ const Home = () => {
       {activeTab === 'quick' && (
         <Row className="md-9 mt-3">
           <Col className="md-3">
-            <Button className="bg-dark text-light w-100">
+            <Button
+              className="bg-dark text-light w-100 position-relative"
+              onClick={() => handleQuickConnect(EGameType.bullet)}
+            >
+              {game?.type === EGameType.bullet && (
+                <div className="position-absolute top-0 bottom-0 d-flex align-items-center justify-content-center">
+                  <Spinner />
+                </div>
+              )}
               <h2>1 min</h2>
               <div className="d-flex gap-3 justify-content-center">
                 <FaRocket size={20} className="text-success" />
-                <span style={{ color: 'var(--text-gray)' }} onClick={() => handleQuickConnect(EGameType.ultra)}>
-                  Bullet
-                </span>
+                <span style={{ color: 'var(--text-gray)' }}>Bullet</span>
               </div>
             </Button>
           </Col>
           <Col className="md-3">
-            <Button className="bg-dark text-light w-100" onClick={() => handleQuickConnect(EGameType.blitz)}>
+            <Button
+              className="bg-dark text-light w-100 position-relative"
+              onClick={() => handleQuickConnect(EGameType.blitz)}
+            >
+              {game?.type === EGameType.blitz && (
+                <div className="position-absolute top-0 bottom-0 d-flex align-items-center justify-content-center">
+                  <Spinner />
+                </div>
+              )}
+
               <h2>3+2s</h2>
               <div className="d-flex gap-3 justify-content-center">
                 <GiJetFighter size={20} className="text-success" />
@@ -80,7 +94,15 @@ const Home = () => {
             </Button>
           </Col>
           <Col className="md-3">
-            <Button className="bg-dark text-light w-100" onClick={() => handleQuickConnect(EGameType.rapid)}>
+            <Button
+              className="bg-dark text-light w-100  position-relative"
+              onClick={() => handleQuickConnect(EGameType.rapid)}
+            >
+              {game?.type === EGameType.rapid && (
+                <div className="position-absolute top-0 bottom-0 d-flex align-items-center justify-content-center">
+                  <Spinner />
+                </div>
+              )}
               <h2>10 min</h2>
               <div className="d-flex gap-3 justify-content-center">
                 <FaDove size={20} className="text-success" />

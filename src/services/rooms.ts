@@ -6,7 +6,7 @@ let socket: WebSocket | null = null;
 const wsUrl = process.env.REACT_APP_API_URL;
 
 type RoomProps = {
-  op: 'connect' | 'create' | 'search';
+  op: 'connect' | 'create' | 'search' | 'remove';
   type?: EGameType;
   userId: string | number;
   roomId?: string;
@@ -19,6 +19,7 @@ export const connectToRoom = ({ roomId, op, type, userId, newGame, onSetGame, on
   let url = '';
   if (op === 'search' && type) url = wsUrl + `rooms/${userId}?op=${op}&game_type=${type}`;
   if (op === 'connect' && roomId) url = wsUrl + `rooms/${userId}?op=${op}&room_id=${roomId}`;
+  if (op === 'remove' && roomId) url = wsUrl + `rooms/${userId}?op=${op}&room_id=${roomId}`;
 
   if (op === 'create' && newGame)
     url =

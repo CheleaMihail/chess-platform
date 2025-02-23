@@ -1,8 +1,6 @@
-// @ts-nocheck
 import React, { useEffect, useState } from 'react';
-import { Chess } from 'chess.js'; // default export for chess.js v1.0.0
+import { Chess } from 'chess.js';
 import { Chessboard } from 'react-chessboard';
-import { Container } from 'react-bootstrap';
 
 interface ChessBoardProps {
   onMakeMove: (uci: string) => void;
@@ -24,10 +22,9 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ onMakeMove, fen, boardOrientati
     updateBoardHighlights(newGame);
   }, [fen]);
 
-  // Find the king's square for the current turn
   const findKingInCheck = (chessInstance: any) => {
     const board = chessInstance.board();
-    const kingColor = chessInstance.turn(); // "w" or "b"
+    const kingColor = chessInstance.turn();
     for (let row = 0; row < 8; row++) {
       for (let col = 0; col < 8; col++) {
         const piece = board[row][col];
@@ -39,10 +36,8 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ onMakeMove, fen, boardOrientati
     return null;
   };
 
-  // Compute the game result
   const getGameResult = (chessInstance: any): string => {
     if (chessInstance.isCheckmate()) {
-      // The side whose turn it is now has been checkmated.
       const losingColor = chessInstance.turn();
       const winningColor = losingColor === 'w' ? 'Black' : 'White';
       return `Checkmate! ${winningColor} wins.`;
@@ -58,7 +53,6 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ onMakeMove, fen, boardOrientati
     return '';
   };
 
-  // Update board highlights and game result
   const updateBoardHighlights = (chessInstance: any) => {
     const newSquares: Record<string, React.CSSProperties> = {};
 
@@ -66,18 +60,17 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ onMakeMove, fen, boardOrientati
       const kingSquare = findKingInCheck(chessInstance);
       if (kingSquare) {
         newSquares[kingSquare] = {
-          background: 'rgba(255, 0, 0, 0.6)', // Red highlight for check/checkmate
+          background: 'rgba(255, 0, 0, 0.6)',
         };
       }
     }
     setOptionSquares(newSquares);
-    // Update result message if game is over
     const gameResult = getGameResult(chessInstance);
     setResult(gameResult);
   };
 
-  // Get possible moves for a piece at a given square
   const getMoveOptions = (square: string) => {
+    // @ts-ignore
     const moves = game.moves({ square, verbose: true });
     if (moves.length === 0) {
       setOptionSquares({});
@@ -91,13 +84,12 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ onMakeMove, fen, boardOrientati
       };
     });
     newSquares[square] = {
-      background: 'rgba(255, 255, 0, 0.4)', // Highlight the piece being moved
+      background: 'rgba(255, 255, 0, 0.4)',
     };
     setOptionSquares(newSquares);
     return true;
   };
 
-  // Handle square click events
   const onSquareClick = (square: string) => {
     if (!moveFrom) {
       const hasMoveOptions = getMoveOptions(square);
@@ -106,7 +98,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ onMakeMove, fen, boardOrientati
       }
       return;
     }
-
+    // @ts-ignore
     const moves = game.moves({ square: moveFrom, verbose: true });
     const validMove = moves.find((move: any) => move.to === square);
     if (validMove) {
@@ -117,7 +109,9 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ onMakeMove, fen, boardOrientati
 
       // Send updated move to parent (FEN or move string)
       setFen(gameCopy.fen());
-      onMakeMove(moveFrom + validMove.san.slice(-2));
+      // @ts-ignore
+      const uciMove = validMove.from + validMove.to + (validMove.promotion ? validMove.promotion : '');
+      onMakeMove(uciMove);
       setMoveFrom(null);
     } else {
       setMoveFrom(null);
@@ -129,6 +123,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ onMakeMove, fen, boardOrientati
     <div className="d-flex flex-column justify-content-center align-items-center">
       <div className="d-flex justify-content-center">
         <Chessboard
+          // @ts-ignore
           boardOrientation={boardOrientation}
           boardWidth={600}
           id="Chessboard"

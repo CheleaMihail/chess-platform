@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Nav } from 'react-bootstrap';
+import { Nav, Spinner } from 'react-bootstrap';
 import CreateGamePanel from '../../components/CreateGamePanel';
 import CreateBattlePanel from '../../components/CreateBattlePanel';
 import { useAppDispatch } from '../../redux';
@@ -98,6 +98,7 @@ const CreateGame = () => {
           onCreatePrivate={hanldeCreatePrivateGame}
         />
       )}
+      {game && <Spinner />}
     </div>
   );
 };
