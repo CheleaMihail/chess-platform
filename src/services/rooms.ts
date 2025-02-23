@@ -1,4 +1,4 @@
-import { ICreateGame, IGame, setGame } from '../redux/rooms/slice';
+import { ICreateGame, IGame } from '../redux/rooms/slice';
 import { EGameType } from '../types/enums';
 
 let socket: WebSocket | null = null;
@@ -35,26 +35,26 @@ export const connectToRoom = ({ roomId, op, type, userId, newGame, onSetGame }: 
     // console.log('Event', event);
     const response = JSON.parse(event.data);
     console.log('Event', response);
-
+    window.alert(response.op);
     switch (response.op) {
       case 'created':
-        if (response.game) setGame(response.game);
+        if (response.game) onSetGame(response.game);
         break;
 
-      case 'initialized':
-        setGame(response.game);
+      case 'connecte':
+        if (response.game) onSetGame(response.game);
         break;
 
       case 'game':
-        setGame(response.game);
+        onSetGame(response.game);
         break;
 
       case 'move':
-        setGame(response.game);
+        onSetGame(response.game);
         break;
 
       case 'message':
-        setGame(response.game);
+        onSetGame(response.game);
         break;
     }
     // if (response.room_id) localStorage.setItem('roomId', response.room_id);
