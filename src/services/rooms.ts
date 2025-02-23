@@ -3,42 +3,62 @@ let socket: WebSocket | null = null;
 const wsUrl = process.env.REACT_APP_API_URL;
 
 type RoomProps = {
-  roomId: string;
-  user_id?: number;
+  roomId?: string;
+  user_id?: string;
+  // room_type?: string;
+  onChangeFEN: (fen: string) => void;
   onMessage: (message: string) => void;
   onStatusChange: (status: boolean) => void;
   onGetColor: (color: 'white' | 'black') => void;
-  onChangeFEN: (fen: string) => void;
 };
 
 export const connectToRoom = ({ roomId, onMessage, onStatusChange, onGetColor, user_id, onChangeFEN }: RoomProps) => {
+  console.log('User Id ' + user_id + ' room_id ' + roomId);
   if (socket) {
     socket.close();
   }
 
-  socket = new WebSocket(wsUrl + `rooms/${roomId}/${user_id ? user_id : ''}`);
+  const game_type = 'rapid';
+  const color_type = 'white';
+
+  socket = new WebSocket(
+    wsUrl +
+      `rooms/${user_id}?room_id=${roomId ? roomId : ''}${game_type ? '&game_type=' + game_type : ''}${
+        color_type ? '&color_type=' + color_type : ''
+      }`
+  );
 
   socket.onopen = () => onStatusChange(true);
   socket.onmessage = (event: MessageEvent) => {
-    const message: string = event.data;
-    console.log('Received:', message);
+    console.log('Event', event);
 
-    if (message.includes('FEN')) {
-      const fen: string = message.split('FEN: ')[1];
-      console.log('Game started. FEN:', fen);
-      onChangeFEN(fen);
-    } else if (message.startsWith('You joined as')) {
-      const color: string = message.split('You joined as ')[1];
-      onGetColor(color === 'WHITE' ? 'white' : 'black');
-      console.log('Player color:', color);
-    }
+    const response = JSON.parse(event.data);
+
+    if (response.room_id) localStorage.setItem('roomId', response.room_id);
+    if (response.message?.includes('not available')) localStorage.removeItem('roomId');
+    if (response.fen) onChangeFEN(response.fen);
+    if (response.color) onGetColor(response.color);
+
+    // const message: string = event.data;
+    // console.log('Received:', message);
+    // if (message.includes('FEN')) {
+    //   const fen: string = message.split('FEN: ')[1];
+    //   console.log('Game started. FEN:', fen);
+    //   onChangeFEN(fen);
+    // } else if (message.startsWith('You joined as')) {
+    //   const color: string = message.split('You joined as ')[1];
+    //   onGetColor(color === 'WHITE' ? 'white' : 'black');
+    //   console.log('Player color:', color);
+    // }
   };
   socket.onclose = () => onStatusChange(false);
 };
 
-export const sendMove = (move: string) => {
+export const sendMove = (move: string, room_id: string) => {
+  console.log('Room_id ' + room_id);
+
   if (socket && socket.readyState === WebSocket.OPEN) {
-    socket.send(move);
+    socket.send(JSON.stringify({ move, room_id }));
   }
 };
 

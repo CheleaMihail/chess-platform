@@ -11,7 +11,7 @@ const Login = () => {
   const [email, setEmail] = useState<string>('ion@example.com');
   const [password, setPassword] = useState<string>('ion');
 
-  const authStatus = useSelector(selectAuthStatus);
+  const auth = useSelector(selectAuthStatus);
   const navigate = useNavigate();
 
   const handleLogIn = () => {
@@ -19,8 +19,8 @@ const Login = () => {
   };
 
   useEffect(() => {
-    if (authStatus.id) navigate('/');
-  }, [authStatus.id]);
+    if (auth.id) navigate('/');
+  }, [auth.id]);
 
   return (
     <Container className="signin-container h-100">
