@@ -4,16 +4,19 @@ import CreateGamePanel from '../../components/CreateGamePanel';
 import CreateBattlePanel from '../../components/CreateBattlePanel';
 import { useAppDispatch } from '../../redux';
 import { useSelector } from 'react-redux';
-import { selectCreateGame } from '../../redux/rooms/selectors';
-import { ICreateGame, IGame, setCreateGame, setGame } from '../../redux/rooms/slice';
+import { selectCreateGame, selectGame } from '../../redux/rooms/selectors';
+import { ICreateGame, IGame, setCreateGame, setGame, setMove } from '../../redux/rooms/slice';
 import { connectToRoom, disconnectRoom } from '../../services/rooms';
 import { selectAuthStatus } from '../../redux/auth/selectors';
+import { useNavigate } from 'react-router-dom';
 
 const CreateGame = () => {
   const [activeTab, setActiveTab] = useState('game');
   const dispatch = useAppDispatch();
   const newGame = useSelector(selectCreateGame);
   const auth = useSelector(selectAuthStatus);
+  const game = useSelector(selectGame);
+  const navigate = useNavigate();
 
   const setNewGame = (game: ICreateGame) => {
     dispatch(setCreateGame(game));
@@ -34,6 +37,12 @@ const CreateGame = () => {
   useEffect(() => {
     return () => disconnectRoom();
   }, []);
+
+  useEffect(() => {
+    if (game?.opponentId) {
+      navigate('/game/' + game.roomId);
+    }
+  }, [game]);
 
   const hanldeCreatePrivateGame = () => {
     // connectToRoom({

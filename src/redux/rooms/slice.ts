@@ -71,15 +71,17 @@ const roomsSlice = createSlice({
     setCreateGame(state, action: PayloadAction<ICreateGame>) {
       state.createGame = action.payload;
     },
-    setGame(state, action: PayloadAction<IGame>) {
+    setGame(state, action: PayloadAction<IGame | undefined>) {
       state.game = action.payload;
     },
-    // setGameStatus(state, action: PayloadAction<EConnectStatus>) {
-    //   IF
-    //   state.game?.connectStatus = action.payload;
-    // },
+    setMove(state, action: PayloadAction<string>) {
+      if (state.game) state.game.activeBoard = { ...state.game.activeBoard, fen: action.payload };
+    },
+    setGameFen(state, action: PayloadAction<string>) {
+      if (state.game) state.game.activeBoard.fen = action.payload;
+    },
   },
 });
 
-export const { setCreateGame, setGame } = roomsSlice.actions;
+export const { setCreateGame, setGame, setMove, setGameFen } = roomsSlice.actions;
 export default roomsSlice.reducer;

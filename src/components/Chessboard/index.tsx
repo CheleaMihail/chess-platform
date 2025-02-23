@@ -1,26 +1,21 @@
 // @ts-nocheck
-import React, { useEffect, useState } from "react";
-import { Chess } from "chess.js"; // default export for chess.js v1.0.0
-import { Chessboard } from "react-chessboard";
-import { Container } from "react-bootstrap";
+import React, { useEffect, useState } from 'react';
+import { Chess } from 'chess.js'; // default export for chess.js v1.0.0
+import { Chessboard } from 'react-chessboard';
+import { Container } from 'react-bootstrap';
 
 interface ChessBoardProps {
-  onMakeMove: (fen: string) => void;
+  onMakeMove: (uci: string) => void;
+  setFen: (fen: string) => void;
   fen: string;
   boardOrientation: string;
 }
 
-const ChessBoard: React.FC<ChessBoardProps> = ({
-  onMakeMove,
-  fen,
-  boardOrientation,
-}) => {
+const ChessBoard: React.FC<ChessBoardProps> = ({ onMakeMove, fen, boardOrientation, setFen }) => {
   const [game, setGame] = useState(new Chess(fen));
   const [moveFrom, setMoveFrom] = useState<string | null>(null);
-  const [optionSquares, setOptionSquares] = useState<
-    Record<string, React.CSSProperties>
-  >({});
-  const [result, setResult] = useState<string>("");
+  const [optionSquares, setOptionSquares] = useState<Record<string, React.CSSProperties>>({});
+  const [result, setResult] = useState<string>('');
 
   useEffect(() => {
     const newGame = new Chess(fen);
@@ -36,8 +31,8 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
     for (let row = 0; row < 8; row++) {
       for (let col = 0; col < 8; col++) {
         const piece = board[row][col];
-        if (piece && piece.type === "k" && piece.color === kingColor) {
-          return `${"abcdefgh"[col]}${8 - row}`;
+        if (piece && piece.type === 'k' && piece.color === kingColor) {
+          return `${'abcdefgh'[col]}${8 - row}`;
         }
       }
     }
@@ -49,18 +44,18 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
     if (chessInstance.isCheckmate()) {
       // The side whose turn it is now has been checkmated.
       const losingColor = chessInstance.turn();
-      const winningColor = losingColor === "w" ? "Black" : "White";
+      const winningColor = losingColor === 'w' ? 'Black' : 'White';
       return `Checkmate! ${winningColor} wins.`;
     } else if (chessInstance.isStalemate()) {
       return "Stalemate! It's a draw.";
     } else if (chessInstance.isInsufficientMaterial()) {
-      return "Draw due to insufficient material.";
+      return 'Draw due to insufficient material.';
     } else if (chessInstance.isThreefoldRepetition()) {
-      return "Draw by threefold repetition.";
+      return 'Draw by threefold repetition.';
     } else if (chessInstance.isGameOver()) {
-      return "Game over.";
+      return 'Game over.';
     }
-    return "";
+    return '';
   };
 
   // Update board highlights and game result
@@ -71,7 +66,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
       const kingSquare = findKingInCheck(chessInstance);
       if (kingSquare) {
         newSquares[kingSquare] = {
-          background: "rgba(255, 0, 0, 0.6)", // Red highlight for check/checkmate
+          background: 'rgba(255, 0, 0, 0.6)', // Red highlight for check/checkmate
         };
       }
     }
@@ -91,13 +86,12 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
     const newSquares: Record<string, React.CSSProperties> = {};
     moves.forEach((move: any) => {
       newSquares[move.to] = {
-        background:
-          "radial-gradient(circle, rgba(0,0,0,.1) 85%, transparent 85%)",
-        borderRadius: "50%",
+        background: 'radial-gradient(circle, rgba(0,0,0,.1) 85%, transparent 85%)',
+        borderRadius: '50%',
       };
     });
     newSquares[square] = {
-      background: "rgba(255, 255, 0, 0.4)", // Highlight the piece being moved
+      background: 'rgba(255, 255, 0, 0.4)', // Highlight the piece being moved
     };
     setOptionSquares(newSquares);
     return true;
@@ -122,6 +116,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
       updateBoardHighlights(gameCopy);
 
       // Send updated move to parent (FEN or move string)
+      setFen(gameCopy.fen());
       onMakeMove(moveFrom + validMove.san.slice(-2));
       setMoveFrom(null);
     } else {

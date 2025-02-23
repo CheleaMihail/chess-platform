@@ -4,19 +4,44 @@ import { GoDotFill } from 'react-icons/go';
 import { useAppDispatch } from '../../redux';
 import { useSelector } from 'react-redux';
 import { selectAuthStatus } from '../../redux/auth/selectors';
-import { sendMove } from '../../services/rooms';
+import { connectToRoom, disconnectRoom, sendMove } from '../../services/rooms';
 import ChessBoard from '../../components/Chessboard';
 import { Col, Row, Stack } from 'react-bootstrap';
 import { FaLandmark } from 'react-icons/fa6';
+import { selectGame } from '../../redux/rooms/selectors';
+import { IGame, setGame, setGameFen, setMove } from '../../redux/rooms/slice';
 
 const ChessGameScreen = () => {
   const dispatch = useAppDispatch();
+  const game = useSelector(selectGame);
   const auth = useSelector(selectAuthStatus);
 
-  const handleMakeMove = async (fen: string) => {
-    const roomId = localStorage.getItem('roomId');
-    if (roomId) sendMove(fen, roomId);
+  useEffect(() => {
+    const handleConnect = () => {
+      if (game?.roomId && auth.id)
+        connectToRoom({
+          op: 'connect',
+          userId: auth.id,
+          roomId: game.roomId,
+          onSetGame: (game: IGame) => dispatch(setGame(game)),
+          onSetMove: (fen: string) => dispatch(setMove(fen)),
+        });
+    };
+
+    handleConnect();
+
+    return () => disconnectRoom();
+  }, []);
+
+  const handleSetFen = async (fen: string) => {
+    dispatch(setGameFen(fen));
   };
+
+  const handleMakeMove = async (uci: string) => {
+    if (game?.roomId) sendMove(uci, game.roomId);
+  };
+
+  if (!game) return <></>;
 
   return (
     <div className="container-fluid text-white border-3 border-success">
@@ -26,7 +51,12 @@ const ChessGameScreen = () => {
             <div style={{ lineHeight: '42px' }}>chessio_level_1 • 1650 </div>
             <div className="fs-3">03:00</div>
           </div>
-          <ChessBoard boardOrientation={'white'} onMakeMove={handleMakeMove} fen={''} />
+          <ChessBoard
+            boardOrientation={game.activeBoard.playerColor}
+            onMakeMove={handleMakeMove}
+            fen={game.activeBoard.fen}
+            setFen={handleSetFen}
+          />
           <div className="d-flex justify-content-between">
             <div style={{ lineHeight: '42px' }}>me • 1650 </div>
             <div className="fs-3">03:00</div>

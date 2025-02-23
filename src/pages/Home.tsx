@@ -1,26 +1,45 @@
 import { useEffect, useState } from 'react';
 import { useAppDispatch } from '../redux';
 import { useSelector } from 'react-redux';
-import { connectToRoom, disconnectRoom, sendMove } from '../services/rooms';
+import { connectToRoom, disconnectRoom } from '../services/rooms';
 import { Button, Col, Nav, Row } from 'react-bootstrap';
 import { selectAuthStatus } from '../redux/auth/selectors';
 import { FaDove, FaRocket } from 'react-icons/fa6';
 import { GiJetFighter } from 'react-icons/gi';
 import { EFetchStatus, EGameType } from '../types/enums';
-import { IGame, setGame } from '../redux/rooms/slice';
+import { IGame, setGame, setMove } from '../redux/rooms/slice';
+import { selectGame } from '../redux/rooms/selectors';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
   const dispatch = useAppDispatch();
   const [activeTab, setActiveTab] = useState('quick');
   // const { messages, isConnected, color, fen } = useSelector(selectRooms);
   const auth = useSelector(selectAuthStatus);
+  const game = useSelector(selectGame);
+  const navigate = useNavigate();
 
-  const handleMakeMove = async (fen: string) => {
-    const roomId = localStorage.getItem('roomId');
-    if (roomId) sendMove(fen, roomId);
+  const handleQuickConnect = (type: EGameType) => {
+    if (auth.id)
+      connectToRoom({
+        op: 'search',
+        type,
+        userId: auth.id,
+        onSetGame: (game: IGame) => dispatch(setGame(game)),
+      });
   };
 
-  const handleSendMessage = () => {};
+  useEffect(() => {
+    dispatch(setGame(undefined));
+  }, []);
+
+  useEffect(() => {
+    if (game?.opponentId) {
+      navigate('/game/' + game.roomId);
+    }
+
+    return () => disconnectRoom();
+  }, [game]);
 
   return (
     <main className="container-fluid h-100 bg-transparent">
@@ -45,12 +64,14 @@ const Home = () => {
               <h2>1 min</h2>
               <div className="d-flex gap-3 justify-content-center">
                 <FaRocket size={20} className="text-success" />
-                <span style={{ color: 'var(--text-gray)' }}>Bullet</span>
+                <span style={{ color: 'var(--text-gray)' }} onClick={() => handleQuickConnect(EGameType.ultra)}>
+                  Bullet
+                </span>
               </div>
             </Button>
           </Col>
           <Col className="md-3">
-            <Button className="bg-dark text-light w-100">
+            <Button className="bg-dark text-light w-100" onClick={() => handleQuickConnect(EGameType.blitz)}>
               <h2>3+2s</h2>
               <div className="d-flex gap-3 justify-content-center">
                 <GiJetFighter size={20} className="text-success" />
@@ -59,7 +80,7 @@ const Home = () => {
             </Button>
           </Col>
           <Col className="md-3">
-            <Button className="bg-dark text-light w-100">
+            <Button className="bg-dark text-light w-100" onClick={() => handleQuickConnect(EGameType.rapid)}>
               <h2>10 min</h2>
               <div className="d-flex gap-3 justify-content-center">
                 <FaDove size={20} className="text-success" />
@@ -70,51 +91,6 @@ const Home = () => {
         </Row>
       )}
       {activeTab === 'lobby' && <Row>Lobby</Row>}
-      <div>
-        <Button
-          variant={'outline-secondary'}
-          onClick={() => {
-            if (auth.id)
-              connectToRoom({
-                op: 'connect',
-                type: EGameType.classic,
-                userId: auth.id,
-                onSetGame: (game: IGame) => dispatch(setGame(game)),
-              });
-          }}
-        >
-          Connect
-        </Button>
-        {/* <h1 className="text-white">Room ID: {roomId}</h1>
-        <ul className="d-flex gap-3">
-          {rooms.map((room, index) => (
-            <Button
-              key={index}
-              variant={roomId !== room ? 'outline-secondary' : 'info'}
-              onClick={() => setRoomId(room)}
-            >
-              {room}
-            </Button>
-          ))}
-        </ul> */}
-
-        {/* <p className="text-white">{isConnected ? 'Connected to WebSocket' : 'Connecting to WebSocket...'}</p>
-
-        <Button onClick={handleSendMessage} disabled={!isConnected}>
-          Send Message
-        </Button> */}
-
-        {/* <div>
-          <h2 className="text-white">Messages:</h2>
-          <ul>
-            {messages.map((message, index) => (
-              <li key={index} className="text-white">
-                {message}
-              </li>
-            ))}
-          </ul>
-        </div> */}
-      </div>
     </main>
   );
 };

@@ -6,17 +6,18 @@ let socket: WebSocket | null = null;
 const wsUrl = process.env.REACT_APP_API_URL;
 
 type RoomProps = {
-  op: 'connect' | 'create';
+  op: 'connect' | 'create' | 'search';
   type?: EGameType;
   userId: string | number;
   roomId?: string;
   newGame?: ICreateGame;
   onSetGame: (game: IGame) => void;
+  onSetMove?: (fen: string) => void;
 };
 
-export const connectToRoom = ({ roomId, op, type, userId, newGame, onSetGame }: RoomProps) => {
+export const connectToRoom = ({ roomId, op, type, userId, newGame, onSetGame, onSetMove }: RoomProps) => {
   let url = '';
-  if (op === 'connect' && type) url = wsUrl + `rooms/${userId}?op=${op}&game_type=${type}`;
+  if (op === 'search' && type) url = wsUrl + `rooms/${userId}?op=${op}&game_type=${type}`;
   if (op === 'connect' && roomId) url = wsUrl + `rooms/${userId}?op=${op}&room_id=${roomId}`;
 
   if (op === 'create' && newGame)
@@ -35,13 +36,12 @@ export const connectToRoom = ({ roomId, op, type, userId, newGame, onSetGame }: 
     // console.log('Event', event);
     const response = JSON.parse(event.data);
     console.log('Event', response);
-    window.alert(response.op);
     switch (response.op) {
       case 'created':
         if (response.game) onSetGame(response.game);
         break;
 
-      case 'connecte':
+      case 'connected':
         if (response.game) onSetGame(response.game);
         break;
 
@@ -50,7 +50,7 @@ export const connectToRoom = ({ roomId, op, type, userId, newGame, onSetGame }: 
         break;
 
       case 'move':
-        onSetGame(response.game);
+        onSetMove?.(response.fen);
         break;
 
       case 'message':
@@ -76,9 +76,11 @@ export const connectToRoom = ({ roomId, op, type, userId, newGame, onSetGame }: 
   // socket.onclose = () => onStatusChange(false);
 };
 
-export const sendMove = (move: string, room_id: string) => {
+export const sendMove = (uci: string, room_id: string) => {
   if (socket && socket.readyState === WebSocket.OPEN) {
-    socket.send(JSON.stringify({ move, room_id }));
+    console.log(uci, room_id);
+
+    socket.send(JSON.stringify({ move: uci, room_id }));
   }
 };
 
@@ -88,49 +90,3 @@ export const disconnectRoom = () => {
     socket = null;
   }
 };
-
-/*
-
-
-let socket: WebSocket | null = null;
-
-export const connectToRoom = (
-  roomId: string,
-  onMessage: (message: string) => void,
-  onLoadMessages: (messages: string[]) => void,
-  onStatusChange: (status: boolean) => void
-) => {
-  if (socket) {
-    socket.close();
-  }
-
-  socket = new WebSocket(`ws://localhost:8000/rooms/${roomId}`);
-
-  socket.onopen = () => onStatusChange(true);
-
-  socket.onmessage = (event) => {
-    const data = JSON.parse(event.data);
-    if (data.type === 'message') {
-      onMessage(data.content);
-    } else if (data.type === 'message_history') {
-      onLoadMessages(data.messages);
-    }
-  };
-
-  socket.onclose = () => onStatusChange(false);
-};
-
-export const sendMessage = (message: string) => {
-  if (socket && socket.readyState === WebSocket.OPEN) {
-    socket.send(message);
-  }
-};
-
-export const disconnectRoom = () => {
-  if (socket) {
-    socket.close();
-    socket = null;
-  }
-};
-
-*/
