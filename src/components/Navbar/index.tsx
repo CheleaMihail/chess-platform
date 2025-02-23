@@ -6,7 +6,7 @@ import Clubs from "../icons/Clubs";
 
 function Navbar() {
   return (
-    <Nav defaultActiveKey="/home" className="nav flex-column">
+    <Nav defaultActiveKey="/home" className="nav flex-column h-100">
       <Nav.Link as={Link} to="/" className="nav_link d-flex align-items-center">
         <img
           src={require("../../assets/images/horseLogo.png")}
@@ -57,7 +57,7 @@ function Navbar() {
         </Nav.Link>
         <Nav.Link
           as={Link}
-          to="/leaderboard"
+          to="/clubs"
           className="nav_link d-flex gap-3 align-items-center"
         >
           <Clubs /> Leaderboard
