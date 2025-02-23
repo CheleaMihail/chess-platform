@@ -1,44 +1,66 @@
+import { ICreateGame, IGame, setGame } from '../redux/rooms/slice';
+import { EGameType } from '../types/enums';
+
 let socket: WebSocket | null = null;
 
 const wsUrl = process.env.REACT_APP_API_URL;
 
 type RoomProps = {
+  op: 'connect' | 'create';
+  type?: EGameType;
+  userId: string | number;
   roomId?: string;
-  user_id?: string;
-  // room_type?: string;
-  onChangeFEN: (fen: string) => void;
-  onMessage: (message: string) => void;
-  onStatusChange: (status: boolean) => void;
-  onGetColor: (color: 'white' | 'black') => void;
+  newGame?: ICreateGame;
+  onSetGame: (game: IGame) => void;
 };
 
-export const connectToRoom = ({ roomId, onMessage, onStatusChange, onGetColor, user_id, onChangeFEN }: RoomProps) => {
-  console.log('User Id ' + user_id + ' room_id ' + roomId);
-  if (socket) {
-    socket.close();
-  }
+export const connectToRoom = ({ roomId, op, type, userId, newGame, onSetGame }: RoomProps) => {
+  let url = '';
+  if (op === 'connect' && type) url = wsUrl + `rooms/${userId}?op=${op}&game_type=${type}`;
+  if (op === 'connect' && roomId) url = wsUrl + `rooms/${userId}?op=${op}&room_id=${roomId}`;
 
-  const game_type = 'rapid';
-  const color_type = 'white';
+  if (op === 'create' && newGame)
+    url =
+      wsUrl +
+      `rooms/${userId}?op=${op}&game_type=${newGame.type}&is_rating=${newGame.isRating}` +
+      `&games_count=${newGame.gamesCount}&player_time=${newGame.playerTime}` +
+      `&player_increment=${newGame.playerIncrement}&opponent_time=${newGame.opponentTime}` +
+      `&opponent_increment=${newGame.opponentIncrement}&color_attach_mode=${newGame.colorAttachMode}` +
+      `&with_armaghedon=${newGame.withArmaghedon}&fen=${newGame.fen}`;
 
-  socket = new WebSocket(
-    wsUrl +
-      `rooms/${user_id}?room_id=${roomId ? roomId : ''}${game_type ? '&game_type=' + game_type : ''}${
-        color_type ? '&color_type=' + color_type : ''
-      }`
-  );
+  socket = new WebSocket(url);
 
-  socket.onopen = () => onStatusChange(true);
+  // socket.onopen = () => onStatusChange(true);
   socket.onmessage = (event: MessageEvent) => {
-    console.log('Event', event);
-
+    // console.log('Event', event);
     const response = JSON.parse(event.data);
+    console.log('Event', response);
 
-    if (response.room_id) localStorage.setItem('roomId', response.room_id);
-    if (response.message?.includes('not available')) localStorage.removeItem('roomId');
-    if (response.fen) onChangeFEN(response.fen);
-    if (response.color) onGetColor(response.color);
+    switch (response.op) {
+      case 'created':
+        if (response.game) setGame(response.game);
+        break;
 
+      case 'initialized':
+        setGame(response.game);
+        break;
+
+      case 'game':
+        setGame(response.game);
+        break;
+
+      case 'move':
+        setGame(response.game);
+        break;
+
+      case 'message':
+        setGame(response.game);
+        break;
+    }
+    // if (response.room_id) localStorage.setItem('roomId', response.room_id);
+    // if (response.message?.includes('not available')) localStorage.removeItem('roomId');
+    // if (response.fen) onChangeFEN(response.fen);
+    // if (response.color) onGetColor(response.color);
     // const message: string = event.data;
     // console.log('Received:', message);
     // if (message.includes('FEN')) {
@@ -51,12 +73,10 @@ export const connectToRoom = ({ roomId, onMessage, onStatusChange, onGetColor, u
     //   console.log('Player color:', color);
     // }
   };
-  socket.onclose = () => onStatusChange(false);
+  // socket.onclose = () => onStatusChange(false);
 };
 
 export const sendMove = (move: string, room_id: string) => {
-  console.log('Room_id ' + room_id);
-
   if (socket && socket.readyState === WebSocket.OPEN) {
     socket.send(JSON.stringify({ move, room_id }));
   }
