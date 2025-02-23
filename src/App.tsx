@@ -15,10 +15,13 @@ import { fetchAuthRefresh } from "./redux/auth/asyncActions";
 import Club from "./pages/Club";
 import CreateGame from "./pages/CreateGame";
 import WaitGame from "./pages/WaitGame";
-import { useSelector } from 'react-redux';
-import { selectAuthStatus } from './redux/auth/selectors';
-import { EFetchStatus } from './types/enums';
-import { setGuestId } from './redux/auth/slice';
+import { useSelector } from "react-redux";
+import { selectAuthStatus } from "./redux/auth/selectors";
+import { EFetchStatus } from "./types/enums";
+import { setGuestId } from "./redux/auth/slice";
+import ChessGameScreen from "./pages/ChessGameScreen";
+import LeaderBoard from "./pages/Leaderboard";
+import PuzzleBoard from "./pages/PuzzleBoard";
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -30,11 +33,11 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (!auh.id && auh.status === EFetchStatus.ERROR) {
-      const guestId = localStorage.getItem('guestId');
+      const guestId = localStorage.getItem("guestId");
 
       if (!guestId) {
-        const guestId = 'guest_' + Math.random();
-        localStorage.setItem('guestId', guestId);
+        const guestId = "guest_" + Math.random();
+        localStorage.setItem("guestId", guestId);
         dispatch(setGuestId(guestId));
       } else dispatch(setGuestId(guestId));
     }
@@ -52,7 +55,10 @@ const App: React.FC = () => {
           <Route path="/players" element={<Players />} />
           <Route path="/user/settings" element={<Settings />} />
           <Route path="/game/create" element={<CreateGame />} />
-          <Route path="/game/:id" element={<WaitGame />} />
+          {/* <Route path="/game/:id" element={<WaitGame />} /> */}
+          <Route path="/game/:id" element={<ChessGameScreen />} />
+          <Route path="/leaderboard" element={<LeaderBoard />} />
+          <Route path="/puzzles" element={<PuzzleBoard />} />
         </Route>
       </Routes>
     </Router>
