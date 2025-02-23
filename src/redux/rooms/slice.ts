@@ -1,40 +1,85 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { EColorAttachMode, EConnectStatus, EGameType, EPlayerColor } from '../../types/enums';
+
+export interface ICreateGame {
+  type: EGameType;
+  isRating: boolean;
+  gamesCount: number;
+  playerTime: number;
+  playerIncrement: number;
+  opponentTime?: number;
+  opponentIncrement?: number;
+  colorAttachMode: EColorAttachMode;
+  withArmaghedon: boolean;
+  fen?: string;
+}
+
+export interface IActiveBoard {
+  fen: string;
+  playerColor: EPlayerColor;
+  moves: [];
+}
+
+export interface IGame {
+  roomId: string;
+
+  connectStatus: EConnectStatus;
+  battleId: string;
+  gameId: string;
+
+  type: EGameType;
+  isRating: boolean;
+  gamesCount: number;
+  playerTime: number;
+  playerIncrement: number;
+  opponentTime: number;
+  opponentIncrement: number;
+  withArmaghedon: boolean;
+
+  messages: [];
+  opponentId: string | number;
+
+  activeBoard: IActiveBoard;
+}
 
 interface WebSocketState {
-  messages: string[];
-  isConnected: boolean;
-  color: 'white' | 'black';
-  fen: string;
+  createGame: ICreateGame;
+  game?: IGame;
 }
 
 const initialState: WebSocketState = {
-  messages: [],
-  isConnected: false,
-  color: 'white',
-  fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+  createGame: {
+    type: EGameType.blitz,
+    isRating: false,
+    gamesCount: 1,
+    playerTime: 180,
+    playerIncrement: 5,
+    opponentTime: 180,
+    opponentIncrement: 5,
+    colorAttachMode: EColorAttachMode.random,
+    withArmaghedon: false,
+    fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+  },
+
+  game: undefined,
 };
 
 const roomsSlice = createSlice({
   name: 'rooms',
   initialState,
   reducers: {
-    setConnected(state, action: PayloadAction<boolean>) {
-      state.isConnected = action.payload;
+    setCreateGame(state, action: PayloadAction<ICreateGame>) {
+      state.createGame = action.payload;
     },
-    addMessage(state, action: PayloadAction<string>) {
-      state.messages.push(action.payload);
+    setGame(state, action: PayloadAction<IGame>) {
+      state.game = action.payload;
     },
-    setMessages(state, action: PayloadAction<string[]>) {
-      state.messages = action.payload;
-    },
-    setColor(state, action: PayloadAction<'white' | 'black'>) {
-      state.color = action.payload;
-    },
-    setFEN(state, action: PayloadAction<string>) {
-      state.fen = action.payload;
-    },
+    // setGameStatus(state, action: PayloadAction<EConnectStatus>) {
+    //   IF
+    //   state.game?.connectStatus = action.payload;
+    // },
   },
 });
 
-export const { setConnected, addMessage, setMessages, setColor, setFEN } = roomsSlice.actions;
+export const { setCreateGame, setGame } = roomsSlice.actions;
 export default roomsSlice.reducer;
