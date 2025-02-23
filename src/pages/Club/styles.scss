@@ -1,0 +1,36 @@
+h3 {
+  color: var(--text-gray) !important;
+}
+
+.nav-tabs .nav-link {
+  color: #ccc;
+  &:hover {
+    color: #fff;
+  }
+}
+
+a {
+  color: var(--text-gray) !important;
+}
+
+.nav-underline .nav-link.active {
+  border-bottom: 1px solid #28a745 !important;
+  font-weight: normal !important;
+}
+
+.description {
+  border-left: 2px solid var(--primary-green);
+  padding-left: 8px;
+  color: var(--text-gray);
+}
+
+.card {
+  border: 0 !important;
+}
+
+.infoSectionName {
+  color: var(--text-gray) !important;
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
