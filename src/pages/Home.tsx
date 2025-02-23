@@ -14,11 +14,14 @@ import { Button, Col, Nav, Row } from "react-bootstrap";
 import { selectAuthStatus } from "../redux/auth/selectors";
 import { FaDove, FaRocket } from "react-icons/fa6";
 import { GiJetFighter } from "react-icons/gi";
+import { EFetchStatus, EGameType } from '../types/enums';
+import { IGame, setGame } from '../redux/rooms/slice';
 
 const Home = () => {
   const dispatch = useAppDispatch();
   const [activeTab, setActiveTab] = useState("quick");
   const { messages, isConnected, color, fen } = useSelector(selectRooms);
+  // const { messages, isConnected, color, fen } = useSelector(selectRooms);
   const auth = useSelector(selectAuthStatus);
 
   const handleMakeMove = async (fen: string) => {
@@ -40,10 +43,20 @@ const Home = () => {
           dispatch(setFEN(fen));
         },
       });
+      // connectToRoom({
+      //   roomId: roomId || undefined,
+      //   user_id: (auth.id || auth.guestId) + '',
+      //   onMessage: (message) => dispatch(addMessage(message)),
+      //   onStatusChange: (status) => dispatch(setConnected(status)),
+      //   onGetColor: (color) => dispatch(setColor(color)),
+      //   onChangeFEN: (fen: string) => {
+      //     dispatch(setFEN(fen));
+      //   },
+      // });
 
-      return () => {
-        disconnectRoom();
-      };
+      // return () => {
+      //   disconnectRoom();
+      // };
     }
   }, [dispatch, auth.id, auth.guestId]);
 
@@ -103,6 +116,51 @@ const Home = () => {
         </Row>
       )}
       {activeTab === "lobby" && <Row>Lobby</Row>}
+      <div>
+        <Button
+          variant={'outline-secondary'}
+          onClick={() => {
+            if (auth.id)
+              connectToRoom({
+                op: 'connect',
+                type: EGameType.classic,
+                userId: auth.id,
+                onSetGame: (game: IGame) => dispatch(setGame(game)),
+              });
+          }}
+        >
+          Connect
+        </Button>
+        {/* <h1 className="text-white">Room ID: {roomId}</h1>
+        <ul className="d-flex gap-3">
+          {rooms.map((room, index) => (
+            <Button
+              key={index}
+              variant={roomId !== room ? 'outline-secondary' : 'info'}
+              onClick={() => setRoomId(room)}
+            >
+              {room}
+            </Button>
+          ))}
+        </ul> */}
+
+        {/* <p className="text-white">{isConnected ? 'Connected to WebSocket' : 'Connecting to WebSocket...'}</p>
+
+        <Button onClick={handleSendMessage} disabled={!isConnected}>
+          Send Message
+        </Button> */}
+
+        {/* <div>
+          <h2 className="text-white">Messages:</h2>
+          <ul>
+            {messages.map((message, index) => (
+              <li key={index} className="text-white">
+                {message}
+              </li>
+            ))}
+          </ul>
+        </div> */}
+      </div>
     </main>
   );
 };
