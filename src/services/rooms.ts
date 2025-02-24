@@ -1,4 +1,4 @@
-import { ICreateGame, IGame } from '../redux/rooms/slice';
+import { ICreateGame, IGame, TMove } from '../redux/rooms/slice';
 import { EGameType } from '../types/enums';
 
 let socket: WebSocket | null = null;
@@ -12,7 +12,7 @@ type RoomProps = {
   roomId?: string;
   newGame?: ICreateGame;
   onSetGame: (game: IGame) => void;
-  onSetMove?: (fen: string) => void;
+  onSetMove?: (fen: string, moves: TMove[]) => void;
 };
 
 export const connectToRoom = ({ roomId, op, type, userId, newGame, onSetGame, onSetMove }: RoomProps) => {
@@ -51,7 +51,7 @@ export const connectToRoom = ({ roomId, op, type, userId, newGame, onSetGame, on
         break;
 
       case 'move':
-        onSetMove?.(response.fen);
+        onSetMove?.(response.fen, response.moves);
         break;
 
       case 'message':
