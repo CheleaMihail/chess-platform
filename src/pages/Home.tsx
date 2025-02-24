@@ -1,15 +1,15 @@
-import { useEffect, useState } from "react";
-import { useAppDispatch } from "../redux";
-import { useSelector } from "react-redux";
-import { connectToRoom, disconnectRoom } from "../services/rooms";
-import { Button, Col, Nav, Row, Spinner } from "react-bootstrap";
-import { selectAuthStatus } from "../redux/auth/selectors";
-import { FaDove, FaRocket } from "react-icons/fa6";
-import { GiJetFighter } from "react-icons/gi";
-import { EFetchStatus, EGameType } from "../types/enums";
-import { IGame, setGame, setMove } from "../redux/rooms/slice";
-import { selectGame } from "../redux/rooms/selectors";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from 'react';
+import { useAppDispatch } from '../redux';
+import { useSelector } from 'react-redux';
+import { connectToRoom, disconnectRoom } from '../services/rooms';
+import { Button, Col, Nav, Row, Spinner } from 'react-bootstrap';
+import { selectAuthStatus } from '../redux/auth/selectors';
+import { FaDove, FaRocket } from 'react-icons/fa6';
+import { GiJetFighter } from 'react-icons/gi';
+import { EFetchStatus, EGameType } from '../types/enums';
+import { IGame, setGame, setMove } from '../redux/rooms/slice';
+import { selectGame } from '../redux/rooms/selectors';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
   const dispatch = useAppDispatch();
@@ -18,27 +18,32 @@ const Home = () => {
   const auth = useSelector(selectAuthStatus);
   const game = useSelector(selectGame);
   const navigate = useNavigate();
+  const iseInitialized = useRef(false);
 
   const handleQuickConnect = (type: EGameType) => {
-    if (auth.id)
+    const userId = auth.id || auth.guestId;
+
+    if (userId)
       connectToRoom({
         op: "search",
         type,
-        userId: auth.id,
-        onSetGame: (game: IGame) => dispatch(setGame(game)),
+        userId: userId,
+        onSetGame: (game: IGame) => {
+          dispatch(setGame(game));
+        },
       });
   };
 
-  useEffect(() => {
-    if (game?.opponentId) {
-      navigate("/game/" + game.roomId);
-    }
-  }, [game]);
+ useEffect(() => {
+    dispatch(setGame(undefined));
+  }, []);
 
   useEffect(() => {
-    dispatch(setGame(undefined));
-    return () => disconnectRoom();
-  }, []);
+    if (game?.opponentId && iseInitialized.current) {
+      navigate('/game/' + game.roomId);
+    }
+    iseInitialized.current = true;
+  }, [game]);
 
   return (
     <main className="container-fluid h-100 bg-transparent">

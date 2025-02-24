@@ -10,6 +10,7 @@ import { Col, Row, Stack } from 'react-bootstrap';
 import { FaLandmark } from 'react-icons/fa6';
 import { selectGame } from '../../redux/rooms/selectors';
 import { IGame, setGame, setGameFen, setMove, TMove } from '../../redux/rooms/slice';
+import { useLocation } from 'react-router-dom';
 
 const ChessGameScreen = () => {
   const dispatch = useAppDispatch();
@@ -19,20 +20,34 @@ const ChessGameScreen = () => {
   const [isRunning, setIsRunning] = useState(false);
 
   useEffect(() => {
+    const userId = auth.id || auth.guestId;
+
+    const storedRoomId = localStorage.getItem('roomId');
+
+    const roomId = game?.roomId ? game?.roomId : storedRoomId;
+
     const handleConnect = () => {
-      if (game?.roomId && auth.id)
+      if (roomId && userId)
         connectToRoom({
-          op: "connect",
-          userId: auth.id,
-          roomId: game.roomId,
-          onSetGame: (game: IGame) => dispatch(setGame(game)),
+          op: 'connect',
+          userId: userId,
+          roomId: roomId,
+          onSetGame: (game: IGame) => {
+            if (game.roomId) localStorage.setItem('roomId', game.roomId);
+            dispatch(setGame(game));
+          },
           onSetMove: (fen: string, moves: TMove[]) => dispatch(setMove({ fen, moves })),
         });
     };
 
     handleConnect();
+  }, [auth.guestId, auth.id]);
 
-    return () => disconnectRoom();
+  useEffect(() => {
+    return () => {
+      localStorage.removeItem('roomId');
+      disconnectRoom();
+    };
   }, []);
 
   useEffect(() => {
@@ -102,30 +117,33 @@ const ChessGameScreen = () => {
           <h6 className="mt-3">Moves History</h6>
           <div className="bg-dark">
             <ul className="list-unstyled px-2" style={{ fontSize: '12px' }}>
-              {game?.activeBoard?.moves?.map((i, index) => {
-                if (index % 2 == 0)
-                  return (
-                    <li className="bg-transparent text-white my-1 d-flex justify-content-between align-content-center border-1 border-bottom">
-                      <div className="v-flex align-content-center">{index % 2 === 0 && (index + 2) / 2}</div>
-                      <div className="v-flex align-content-center">{game.activeBoard.moves[index].move}</div>
-                      <div className="v-flex align-content-center">{game.activeBoard.moves[index + 1]?.move || ''}</div>
-                      <div className="v-flex">
-                        <div className="d-flex gap-2 justify-content-center align-content-center">
-                          <div>
-                            <GoDotFill size={10} className="text-light" />
-                          </div>{' '}
-                          0.97s
+              {game?.activeBoard?.moves?.length &&
+                game.activeBoard.moves.map((i, index) => {
+                  if (index % 2 == 0)
+                    return (
+                      <li className="bg-transparent text-white my-1 d-flex justify-content-between align-content-center border-1 border-bottom">
+                        <div className="v-flex align-content-center">{index % 2 === 0 && (index + 2) / 2}</div>
+                        <div className="v-flex align-content-center">{game.activeBoard.moves[index].move}</div>
+                        <div className="v-flex align-content-center">
+                          {game.activeBoard.moves[index + 1]?.move || ''}
                         </div>
-                        <div className="d-flex gap-2 justify-content-center align-content-center">
-                          <div>
-                            <GoDotFill size={10} style={{ color: 'black' }} />
+                        <div className="v-flex">
+                          <div className="d-flex gap-2 justify-content-center align-content-center">
+                            <div>
+                              <GoDotFill size={10} className="text-light" />
+                            </div>{' '}
+                            0.97s
                           </div>
-                          0.91s
+                          <div className="d-flex gap-2 justify-content-center align-content-center">
+                            <div>
+                              <GoDotFill size={10} style={{ color: 'black' }} />
+                            </div>
+                            0.91s
+                          </div>
                         </div>
-                      </div>
-                    </li>
-                  );
-              })}
+                      </li>
+                    );
+                })}
             </ul>
           </div>
         </Col>
