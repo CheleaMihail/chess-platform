@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Nav, Spinner } from 'react-bootstrap';
 import CreateGamePanel from '../../components/CreateGamePanel';
 import CreateBattlePanel from '../../components/CreateBattlePanel';
@@ -17,10 +17,34 @@ const CreateGame = () => {
   const auth = useSelector(selectAuthStatus);
   const game = useSelector(selectGame);
   const navigate = useNavigate();
+  const iseInitialized = useRef(false);
 
   const setNewGame = (game: ICreateGame) => {
     dispatch(setCreateGame(game));
   };
+
+  // const hanldeCreateGame = () => {
+  //   const userId = auth.id || auth.guestId;
+
+  //   if (userId)
+  //     connectToRoom({
+  //       op: 'create',
+  //       userId,
+  //       newGame,
+  //       onSetGame: (game: IGame) => dispatch(setGame(game)),
+  //     });
+  // };
+
+  // useEffect(() => {
+  //   return () => disconnectRoom();
+  // }, []);
+
+  // useEffect(() => {
+  //   if (game?.opponentId && iseInitialized.current) {
+  //     navigate('/game/' + game.roomId);
+  //   }
+  //   iseInitialized.current = true;
+  // }, [game]);
 
   const hanldeCreateGame = () => {
     const userId = auth.id || auth.guestId;
@@ -28,20 +52,23 @@ const CreateGame = () => {
     if (userId)
       connectToRoom({
         op: 'create',
-        userId,
-        newGame,
-        onSetGame: (game: IGame) => dispatch(setGame(game)),
+        userId: userId,
+        newGame: newGame,
+        onSetGame: (game: IGame) => {
+          dispatch(setGame(game));
+        },
       });
   };
 
   useEffect(() => {
-    return () => disconnectRoom();
+    dispatch(setGame(undefined));
   }, []);
 
   useEffect(() => {
-    if (game?.opponentId) {
+    if (game?.opponentId && iseInitialized.current) {
       navigate('/game/' + game.roomId);
     }
+    iseInitialized.current = true;
   }, [game]);
 
   const hanldeCreatePrivateGame = () => {

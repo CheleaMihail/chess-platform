@@ -55,7 +55,7 @@ interface WebSocketState {
 
 const initialState: WebSocketState = {
   createGame: {
-    type: EGameType.blitz,
+    type: EGameType.rapid,
     isRating: false,
     gamesCount: 1,
     playerTime: 15,
