@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { Button, Container, Form, Stack } from 'react-bootstrap';
-import { useAppDispatch } from '../../redux';
-import { fetchAuthRegister } from '../../redux/auth/asyncActions';
-import { Link, useNavigate, useNavigation } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { selectAuthStatus } from '../../redux/auth/selectors';
+import React, { useEffect, useState } from "react";
+import { Button, Container, Form, Stack } from "react-bootstrap";
+import { useAppDispatch } from "../../redux";
+import { fetchAuthRegister } from "../../redux/auth/asyncActions";
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { selectAuthStatus } from "../../redux/auth/selectors";
 
 type Inputs = {
   username: string;
@@ -14,9 +14,9 @@ type Inputs = {
 
 const Register = () => {
   const dispatch = useAppDispatch();
-  const [username, setUsername] = useState<string>('ion');
-  const [email, setEmail] = useState<string>('ion@example.com');
-  const [password, setPassword] = useState<string>('ion');
+  const [username, setUsername] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
   const authStatus = useSelector(selectAuthStatus);
   const navigate = useNavigate();
@@ -26,12 +26,16 @@ const Register = () => {
   };
 
   useEffect(() => {
-    if (authStatus.id) navigate('/');
+    if (authStatus.id) navigate("/");
   }, [authStatus.id]);
 
   return (
     <Container className="signin-container h-100">
-      <Stack className="signin-box p-4" gap={5} style={{ width: '50%', margin: '0 auto' }}>
+      <Stack
+        className="signin-box p-4"
+        gap={5}
+        style={{ width: "50%", margin: "0 auto" }}
+      >
         <h2 className="text-center text-white">SIGN UP</h2>
 
         <Form>
@@ -62,17 +66,25 @@ const Register = () => {
             />
           </Form.Group>
 
-          <Button variant="primary" className="w-100 mb-2" onClick={handleLogIn}>
+          <Button
+            variant="primary"
+            className="w-100 mb-2"
+            onClick={handleLogIn}
+          >
             SIGN UP
           </Button>
 
-          <Form.Check type="checkbox" label="Keep logged in" className="mt-3" />
+          <Form.Check
+            type="checkbox"
+            label="Keep logged in"
+            className="mt-3 text-light"
+          />
 
           <hr />
 
           <Stack direction="horizontal" gap={3}>
             <Link to="/login" className="text-light">
-              Sig In
+              Sign In
             </Link>
           </Stack>
         </Form>
