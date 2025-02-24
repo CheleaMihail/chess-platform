@@ -102,7 +102,7 @@ const ChessGameScreen = () => {
           <h6 className="mt-3">Moves History</h6>
           <div className="bg-dark">
             <ul className="list-unstyled px-2" style={{ fontSize: '12px' }}>
-              {game.activeBoard.moves.map((i, index) => {
+              {game?.activeBoard?.moves?.map((i, index) => {
                 if (index % 2 == 0)
                   return (
                     <li className="bg-transparent text-white my-1 d-flex justify-content-between align-content-center border-1 border-bottom">
