@@ -14,10 +14,16 @@ export interface ICreateGame {
   fen?: string;
 }
 
+export type TMove = {
+  move: string;
+  color: string;
+  time: number;
+};
+
 export interface IActiveBoard {
   fen: string;
   playerColor: EPlayerColor;
-  moves: [];
+  moves: TMove[];
 }
 
 export interface IGame {
@@ -74,8 +80,9 @@ const roomsSlice = createSlice({
     setGame(state, action: PayloadAction<IGame | undefined>) {
       state.game = action.payload;
     },
-    setMove(state, action: PayloadAction<string>) {
-      if (state.game) state.game.activeBoard = { ...state.game.activeBoard, fen: action.payload };
+    setMove(state, action: PayloadAction<{ fen: string; moves: TMove[] }>) {
+      if (state.game)
+        state.game.activeBoard = { ...state.game.activeBoard, fen: action.payload.fen, moves: action.payload.moves };
     },
     setGameFen(state, action: PayloadAction<string>) {
       if (state.game) state.game.activeBoard.fen = action.payload;
