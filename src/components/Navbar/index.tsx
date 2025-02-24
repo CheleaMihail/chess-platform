@@ -3,11 +3,24 @@ import { Link } from "react-router-dom";
 
 import "./styles.scss";
 import Clubs from "../icons/Clubs";
+import {
+  FaCampground,
+  FaChess,
+  FaChessQueen,
+  FaCube,
+  FaGraduationCap,
+  FaMagnifyingGlass,
+  FaMedal,
+} from "react-icons/fa6";
 
 function Navbar() {
   return (
     <Nav defaultActiveKey="/home" className="nav flex-column">
-      <Nav.Link as={Link} to="/" className="nav_link d-flex align-items-center">
+      <Nav.Link
+        as={Link}
+        to="/"
+        className="nav_link d-flex align-items-center first"
+      >
         <img
           src={require("../../assets/images/horseLogo.png")}
           className="logo rounded d-block"
@@ -25,49 +38,49 @@ function Navbar() {
           to="/game/create"
           className="nav_link d-flex gap-3 align-items-center"
         >
-          <Clubs /> Create game or battle
+          <FaChess /> Create game or battle
         </Nav.Link>
         <Nav.Link
           as={Link}
           to="/clubs"
           className="nav_link d-flex gap-3 align-items-center"
         >
-          <Clubs /> Clubs
+          <FaCampground /> Clubs
         </Nav.Link>
         <Nav.Link
           as={Link}
           to="/"
           className="nav_link d-flex gap-3 align-items-center"
         >
-          <Clubs /> Tournamnts
+          <FaChessQueen /> Tournamnts
         </Nav.Link>
         <Nav.Link
           as={Link}
           to="/"
           className="nav_link d-flex gap-3 align-items-center"
         >
-          <Clubs /> Puzzles
+          <FaGraduationCap /> Puzzles
         </Nav.Link>
         <Nav.Link
           as={Link}
           to="/players"
           className="nav_link d-flex gap-3 align-items-center"
         >
-          <Clubs /> Players
+          <FaMagnifyingGlass /> Players
         </Nav.Link>
         <Nav.Link
           as={Link}
           to="/leaderboard"
           className="nav_link d-flex gap-3 align-items-center"
         >
-          <Clubs /> Leaderboard
+          <FaMedal /> Leaderboard
         </Nav.Link>
         <Nav.Link
           as={Link}
           to="/"
           className="nav_link d-flex gap-3 align-items-center"
         >
-          <Clubs /> Play with computer
+          <FaCube /> Play with computer
         </Nav.Link>
       </Stack>
     </Nav>

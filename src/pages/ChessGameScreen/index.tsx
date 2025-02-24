@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { GoDotFill } from 'react-icons/go';
-import { useAppDispatch } from '../../redux';
-import { useSelector } from 'react-redux';
-import { selectAuthStatus } from '../../redux/auth/selectors';
-import { connectToRoom, disconnectRoom, sendMove } from '../../services/rooms';
-import ChessBoard from '../../components/Chessboard';
-import { Col, Row, Stack } from 'react-bootstrap';
-import { FaLandmark } from 'react-icons/fa6';
-import { selectGame } from '../../redux/rooms/selectors';
-import { IGame, setGame, setGameFen, setMove } from '../../redux/rooms/slice';
+import React, { useEffect, useState } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { GoDotFill } from "react-icons/go";
+import { useAppDispatch } from "../../redux";
+import { useSelector } from "react-redux";
+import { selectAuthStatus } from "../../redux/auth/selectors";
+import { connectToRoom, disconnectRoom, sendMove } from "../../services/rooms";
+import ChessBoard from "../../components/Chessboard";
+import { Col, Row } from "react-bootstrap";
+import { FaLandmark } from "react-icons/fa6";
+import { selectGame } from "../../redux/rooms/selectors";
+import { IGame, setGame, setGameFen, setMove } from "../../redux/rooms/slice";
 
 const ChessGameScreen = () => {
   const dispatch = useAppDispatch();
@@ -20,7 +20,7 @@ const ChessGameScreen = () => {
     const handleConnect = () => {
       if (game?.roomId && auth.id)
         connectToRoom({
-          op: 'connect',
+          op: "connect",
           userId: auth.id,
           roomId: game.roomId,
           onSetGame: (game: IGame) => dispatch(setGame(game)),
@@ -48,7 +48,7 @@ const ChessGameScreen = () => {
       <Row className="md-9">
         <Col className="md-6 p-3">
           <div className="d-flex justify-content-between">
-            <div style={{ lineHeight: '42px' }}>chessio_level_1 • 1650 </div>
+            <div style={{ lineHeight: "42px" }}>chessio_level_1 • 1650 </div>
             <div className="fs-3">03:00</div>
           </div>
           <ChessBoard
@@ -58,7 +58,7 @@ const ChessGameScreen = () => {
             setFen={handleSetFen}
           />
           <div className="d-flex justify-content-between">
-            <div style={{ lineHeight: '42px' }}>me • 1650 </div>
+            <div style={{ lineHeight: "42px" }}>me • 1650 </div>
             <div className="fs-3">03:00</div>
           </div>
         </Col>
@@ -68,7 +68,7 @@ const ChessGameScreen = () => {
               <div className="d-flex gap-2 h-100 align-content-center">
                 <FaLandmark size={20} />
                 <span className="text-primary fw-bold">Classic</span>
-                <div className="vr" style={{ width: '1.5px' }}></div>
+                <div className="vr" style={{ width: "1.5px" }}></div>
                 <span className="text-primary fw-bold">Frendly</span>
               </div>
               <div className="h-100">60+60</div>
@@ -77,7 +77,7 @@ const ChessGameScreen = () => {
           </div>
           <h6 className="mt-3">Moves History</h6>
           <div className="bg-dark">
-            <ul className="list-unstyled px-2" style={{ fontSize: '12px' }}>
+            <ul className="list-unstyled px-2" style={{ fontSize: "12px" }}>
               <li className="bg-transparent text-white my-1 d-flex justify-content-between align-content-center border-1 border-bottom">
                 <div className="v-flex align-content-center">2</div>
                 <div className="v-flex align-content-center">d4</div>
@@ -86,12 +86,12 @@ const ChessGameScreen = () => {
                   <div className="d-flex gap-2 justify-content-center align-content-center">
                     <div>
                       <GoDotFill size={10} className="text-light" />
-                    </div>{' '}
+                    </div>{" "}
                     0.97s
                   </div>
                   <div className="d-flex gap-2 justify-content-center align-content-center">
                     <div>
-                      <GoDotFill size={10} style={{ color: 'black' }} />
+                      <GoDotFill size={10} style={{ color: "black" }} />
                     </div>
                     0.91s
                   </div>
@@ -105,12 +105,12 @@ const ChessGameScreen = () => {
                   <div className="d-flex gap-2 justify-content-center align-content-center">
                     <div>
                       <GoDotFill size={10} className="text-light" />
-                    </div>{' '}
+                    </div>{" "}
                     0.97s
                   </div>
                   <div className="d-flex gap-2 justify-content-center align-content-center">
                     <div>
-                      <GoDotFill size={10} style={{ color: 'black' }} />
+                      <GoDotFill size={10} style={{ color: "black" }} />
                     </div>
                     0.91s
                   </div>

@@ -38,7 +38,7 @@ const Clubs = () => {
     dispatch(fetchSearchPlayers("jo"));
   };
   return (
-    <main className="clubs container-fluid bg-transparent h-flex gap-3 p-4">
+    <main className="clubs container bg-transparent h-flex gap-3 p-4">
       <Stack direction="horizontal" gap={3} className="clubsHeader">
         <FaCampground size={30} color="var(--orange)" />
         <div className="title">Chess Clubs</div>
@@ -53,11 +53,11 @@ const Clubs = () => {
         />
       </InputGroup>
       <div className="subtitle">Top clubs:</div>
-      <Container className="px-0">
-        {clubs.map((club, index) => (
-          <Link to={`/club/${club.id}`}>
+      <div className="px-0">
+        {clubs.map((club) => (
+          <Link to={`/club/${club.id}`} key={club.id}>
             <Card
-              key={index}
+              key={club.id}
               className="mb-3 bg-dark border-0"
               style={{ color: "var(--text-gray)" }}
             >
@@ -79,7 +79,7 @@ const Clubs = () => {
             </Card>
           </Link>
         ))}
-      </Container>
+      </div>
     </main>
   );
 };
