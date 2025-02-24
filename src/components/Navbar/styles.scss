@@ -4,6 +4,12 @@
   &_link {
     height: 60px;
     color: var(--text-gray);
+    &:hover {
+      background-color: var(--dark);
+    }
+  }
+  .first:hover {
+    background-color: transparent;
   }
 }
 
@@ -31,4 +37,7 @@
 
 a {
   color: var(--text-gray);
+}
+svg {
+  font-size: 25px;
 }

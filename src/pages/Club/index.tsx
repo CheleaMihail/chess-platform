@@ -45,7 +45,7 @@ const Club = () => {
   ];
 
   return (
-    <main className="container p-5">
+    <main className="container p-4">
       <Card className="bg-transparent text-light p-4">
         {/* Header */}
         <Row className="mb-3">

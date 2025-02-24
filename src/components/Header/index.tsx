@@ -23,7 +23,7 @@ function Header() {
 
         <Button className="px-2">
           <Link to="/login">
-            <Exit /> Sign in{" "}
+            <Exit /> Sign in
           </Link>
         </Button>
       </Stack>

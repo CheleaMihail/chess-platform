@@ -22,7 +22,7 @@ const ChessGameScreen = () => {
     const handleConnect = () => {
       if (game?.roomId && auth.id)
         connectToRoom({
-          op: 'connect',
+          op: "connect",
           userId: auth.id,
           roomId: game.roomId,
           onSetGame: (game: IGame) => dispatch(setGame(game)),
